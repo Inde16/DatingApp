@@ -8,45 +8,53 @@ namespace DatingApp.API.Data
     public class AuthRepository : IAuthRepository
     {
         private readonly DataContext _context;
+        
+
+        public AuthRepository(DataContext context)
+        {
+            _context = context;
+
+        }
+
         public async Task<User> Login(string username, string password)
         {
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Name == username);
 
             if (user == null)
                 return null;
-            
-            if(!VerifyPasswordHash(password , user.PasswordHash , user.PasswordSalt))
+
+            if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
                 return null;
 
-        return null;
+            return null;
         }
 
         private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
         {
             using (var hwin = new System.Security.Cryptography.HMACSHA512(passwordSalt))
             {
-                
-               var computedHash = hwin.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
 
-               for(int i = 0; i < computedHash.Length; i++)
-               {
-                   if(computedHash != passwordHash)
-                   return false;
-               }
-            
+                var computedHash = hwin.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+
+                for (int i = 0; i < computedHash.Length; i++)
+                {
+                    if (computedHash != passwordHash)
+                        return false;
+                }
+
             }
             return true;
         }
 
         public async Task<User> Register(User user, string password)
         {
-            byte[] passwordHash , passwordSalt;
-            CreatePasswordHas(password , out passwordHash ,out passwordSalt);
+            byte[] passwordHash, passwordSalt;
+            CreatePasswordHas(password, out passwordHash, out passwordSalt);
 
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
 
-            await _context .Users.AddAsync(user);
+            await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
 
             return user;
@@ -59,15 +67,15 @@ namespace DatingApp.API.Data
                 passwordSalt = hwin.Key;
                 passwordHash = hwin.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             }
-            
+
         }
 
         public async Task<bool> UserExist(string username)
         {
             if (await _context.Users.AnyAsync(x => x.Name == username))
-            return true;
+                return true;
 
-        return false;
+            return false;
         }
     }
 }
