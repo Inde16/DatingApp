@@ -1,17 +1,14 @@
 using System;
 
-namespace DatingApp.API.Modules
+namespace DatingApp.API.Dtos
 {
-    public class Photo
+    public class PhotoForReturnDto
     {
-        public int Id { get; set; }
+        public int id { get; set; }
         public string Url { get; set; }
         public string Descreption{ get; set;}
         public DateTime DateAdded{ get; set; }
         public bool IsMain{ get; set; }
         public string PublicId { get; set; }
-        public User User { get; set; }
-        public int UserId { get; set; }
-
     }
 }
