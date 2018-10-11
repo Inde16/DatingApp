@@ -9,6 +9,10 @@
     transition-duration: 500ms;
     transition-timing-function: ease-out;
 }
+img {
+    max-height: 150px;
+    max-width: 150px;
+}
 
 .card-img-wrapper {
     overflow: hidden;
